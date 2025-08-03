@@ -1,0 +1,65 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ master, development ]
+  pull_request:
+    branches: [ master, development ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+
+    - name: Setup module dependencies cache
+      uses: actions/cache@v3
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install module dependencies
+      run: yarn install --frozen-lockfile
+
+    - name: Lint
+      run: yarn lint
+
+    - name: Lint commits
+      uses: wagoid/commitlint-github-action@v5
+      with:
+        configFile: .commitlintrc.js
+
+    - name: Accessibility Tests
+      run: yarn audit:wcag
+
+    - name: Portfolio Audit
+      run: yarn audit:portfolio
+
+    - name: Emergency Response Test
+      run: yarn emergency --test
+
+    - name: Generate Test Report
+      run: yarn report --test
+      if: always()
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: accessibility-test-results
+        path: |
+          logs/
+          reports/
+        retention-days: 30 

@@ -1,0 +1,58 @@
+name: Create release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+    - name: Get version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Get changelog entries
+      id: changelog
+      uses: mindsers/changelog-reader-action@v1
+      with:
+        versionFile: 'CHANGELOG.md'
+        version: ${{ steps.get_version.outputs.VERSION }}
+
+    - name: Accessibility Pre-release Check
+      run: |
+        yarn install --frozen-lockfile
+        yarn audit:wcag
+        yarn audit:portfolio
+        yarn emergency --validate
+
+    - name: Create release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_version.outputs.VERSION }}
+        release_name: Release ${{ steps.get_version.outputs.VERSION }}
+        body: ${{ steps.changelog.outputs.clean_changelog }}
+        draft: false
+        prerelease: false
+
+    - name: Generate Release Report
+      run: |
+        yarn report --release --version ${{ steps.get_version.outputs.VERSION }}
+        yarn emergency --report
+
+    - name: Upload Release Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: accessibility-release-${{ steps.get_version.outputs.VERSION }}
+        path: |
+          reports/
+          logs/
+        retention-days: 90 
