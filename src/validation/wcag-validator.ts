@@ -1,4 +1,4 @@
-import puppeteer, { Browser, Page } from 'puppeteer';
+import puppeteer, { Browser } from 'puppeteer';
 import lighthouse from 'lighthouse';
 import { AuditResult, AccessibilityViolation, WCAGCriteria } from '../types';
 import { getCriteriaById, isPriorityCriteria } from '../core/wcag-criteria';
