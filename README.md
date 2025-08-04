@@ -176,4 +176,4 @@ Este projeto está licenciado sob a Licença MIT - ver o ficheiro [LICENSE](LICE
 Para questões técnicas ou de conformidade:
 - **Email**: accessibility@untile.pt
 - **Slack**: #accessibility-emergency
-- **Telefone**: +351-XXX-XXX-XXX (24/7 para emergências) 
+- **Telefone**: +351-XXX-XXX-XXX (24/7 para emergências) # Test
