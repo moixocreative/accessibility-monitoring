@@ -132,28 +132,4 @@ export interface ReportData {
 }
 
 // Enums para valores específicos
-export enum EmergencyLevel {
-  P0_CRITICAL = 'P0',
-  P1_HIGH = 'P1',
-  P2_MEDIUM = 'P2'
-}
-
-export enum ViolationSeverity {
-  CRITICAL = 'critical',
-  SERIOUS = 'serious',
-  MODERATE = 'moderate',
-  MINOR = 'minor'
-}
-
-export enum Technology {
-  WEBFLOW = 'webflow',
-  LARAVEL = 'laravel',
-  WORDPRESS = 'wordpress'
-}
-
-export enum AuditStatus {
-  PENDING = 'pending',
-  IN_PROGRESS = 'in-progress',
-  COMPLETED = 'completed',
-  FAILED = 'failed'
-} 
+// Removed unused enums to fix linting errors 

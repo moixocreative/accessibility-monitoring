@@ -13,11 +13,8 @@ module.exports = {
     es2022: true,
   },
   rules: {
-    '@typescript-eslint/no-unused-vars': 'error',
-    '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-inferrable-types': 'off',
+    'no-unused-vars': 'error',
+    'no-explicit-any': 'warn',
     'prefer-const': 'error',
     'no-var': 'error',
     'no-console': 'off', // Permitir console.log para scripts
