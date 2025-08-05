@@ -180,6 +180,19 @@ DATABASE_URL=postgresql://user:pass@localhost:5432/accessibility
 LOG_LEVEL=info
 ```
 
+## 📚 Documentação
+
+### Guias Principais
+- [Guia de Instalação](./docs/installation-guide.md) - Instruções detalhadas de instalação e configuração
+- [Guia de Utilização](./docs/usage-guide.md) - Como usar todas as funcionalidades do sistema
+- [Guia de Desenvolvimento](./docs/development-guide.md) - Instruções para desenvolvedores
+
+### Documentação Técnica
+- [Configuração de Emails](./docs/email-configuration.md) - Configuração do sistema de notificações
+- [Anexo A - Critérios WCAG 2.1 AA](./docs/anexo_a_wcag_criteria_revised.md)
+- [Anexo B - Conformidade Legal EAA 2025](./docs/anexo_b_legal_compliance_revised.md)
+- [Anexo I - Monitorização Automática](./docs/anexo_i_automated_monitoring_revised.md)
+
 ## 📞 Suporte
 
 Para questões técnicas ou de conformidade:
