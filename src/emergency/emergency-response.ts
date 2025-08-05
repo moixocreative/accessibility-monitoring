@@ -1,4 +1,4 @@
-import { EmergencyIncident, EmergencyCommunication, EmergencyLevel } from '../types';
+import { EmergencyIncident, EmergencyCommunication } from '../types';
 import { logger, logEmergency, logSLA } from '../utils/logger';
 import { NotificationService } from './notification-service';
 
