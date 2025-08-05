@@ -21,17 +21,33 @@ interface MaintenanceAlert {
 
 export class NotificationService {
   private transporter: nodemailer.Transporter;
+  private isTestMode: boolean;
+  private shouldSendEmails: boolean;
 
   constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: false,
-      auth: {
-        user: process.env.SMTP_USER || 'accessibility@untile.pt',
-        pass: process.env.SMTP_PASS || 'password'
-      }
-    });
+    this.isTestMode = process.env.NODE_ENV === 'test' || process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+    this.shouldSendEmails = process.env.SEND_EMAILS === 'true' || false;
+    
+    if (this.isTestMode || !this.shouldSendEmails) {
+      // Em modo de teste ou quando emails estão desabilitados, criar um transporter mock
+      this.transporter = {
+        sendMail: async () => {
+          logger.info('SIMULAÇÃO: Email simulado enviado (SEND_EMAILS=false ou modo de teste)');
+          return Promise.resolve();
+        }
+      } as any;
+    } else {
+      // Em produção com emails habilitados, usar configuração real
+      this.transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        port: parseInt(process.env.SMTP_PORT || '587'),
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER || 'accessibility@untile.pt',
+          pass: process.env.SMTP_PASS || 'password'
+        }
+      });
+    }
   }
 
   /**
@@ -42,6 +58,17 @@ export class NotificationService {
     const html = this.generateEmergencyEmail(alert);
 
     try {
+      if (this.isTestMode || !this.shouldSendEmails) {
+        // Em modo de teste ou quando emails estão desabilitados, apenas logar
+        logger.info('SIMULAÇÃO: Alerta de emergência simulado (SEND_EMAILS=false ou modo de teste)', {
+          level: alert.level,
+          title: alert.title,
+          sites: alert.sites.length,
+          violations: alert.violations.length
+        });
+        return;
+      }
+
       // Enviar para equipa de emergência
       await this.sendEmail({
         to: process.env.EMERGENCY_EMAIL || 'emergency@untile.pt',
@@ -62,7 +89,10 @@ export class NotificationService {
 
     } catch (error) {
       logger.error('Erro ao enviar alerta de emergência:', error);
-      throw error;
+      // Em modo de teste ou quando emails estão desabilitados, não lançar erro
+      if (!this.isTestMode && this.shouldSendEmails) {
+        throw error;
+      }
     }
   }
 
@@ -74,6 +104,16 @@ export class NotificationService {
     const html = this.generateMaintenanceEmail(alert);
 
     try {
+      if (this.isTestMode || !this.shouldSendEmails) {
+        // Em modo de teste ou quando emails estão desabilitados, apenas logar
+        logger.info('SIMULAÇÃO: Alerta de manutenção simulado (SEND_EMAILS=false ou modo de teste)', {
+          title: alert.title,
+          sites: alert.sites.length,
+          violations: alert.violations.length
+        });
+        return;
+      }
+
       await this.sendEmail({
         to: process.env.MAINTENANCE_EMAIL || 'maintenance@untile.pt',
         subject,
@@ -87,7 +127,10 @@ export class NotificationService {
 
     } catch (error) {
       logger.error('Erro ao enviar alerta de manutenção:', error);
-      throw error;
+      // Em modo de teste ou quando emails estão desabilitados, não lançar erro
+      if (!this.isTestMode && this.shouldSendEmails) {
+        throw error;
+      }
     }
   }
 
@@ -96,6 +139,16 @@ export class NotificationService {
    */
   async sendAuthorityNotification(communication: EmergencyCommunication): Promise<void> {
     try {
+      if (this.isTestMode || !this.shouldSendEmails) {
+        // Em modo de teste ou quando emails estão desabilitados, apenas logar
+        logger.info('SIMULAÇÃO: Notificação para autoridade simulada (SEND_EMAILS=false ou modo de teste)', {
+          communicationId: communication.id,
+          recipient: communication.recipient,
+          subject: communication.subject
+        });
+        return;
+      }
+
       await this.sendEmail({
         to: communication.recipient,
         subject: communication.subject,
@@ -109,7 +162,10 @@ export class NotificationService {
 
     } catch (error) {
       logger.error('Erro ao enviar notificação para autoridade:', error);
-      throw error;
+      // Em modo de teste ou quando emails estão desabilitados, não lançar erro
+      if (!this.isTestMode && this.shouldSendEmails) {
+        throw error;
+      }
     }
   }
 
