@@ -22,29 +22,26 @@ export class NotificationService {
   private shouldSendEmails: boolean;
 
   constructor() {
-    this.isTestMode = process.env.NODE_ENV === 'test' || process.env.CI === 'true';
-    this.shouldSendEmails = process.env.SEND_EMAILS !== 'false';
+    this.isTestMode = process.env.NODE_ENV === 'test' || process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
+    this.shouldSendEmails = process.env.SEND_EMAILS === 'true' || false;
     
-    // Criar mock transporter se em modo teste ou se emails estão desabilitados
     if (this.isTestMode || !this.shouldSendEmails) {
+      // Em modo de teste ou quando emails estão desabilitados, criar um transporter mock
       this.transporter = {
-        sendMail: async (options: any) => {
-          logger.info('📧 EMAIL SIMULADO (Test Mode)', {
-            to: options.to,
-            subject: options.subject,
-            from: options.from
-          });
-          return { messageId: 'test-message-id' };
+        sendMail: async () => {
+          logger.info('SIMULAÇÃO: Email simulado enviado (SEND_EMAILS=false ou modo de teste)');
+          return Promise.resolve();
         }
       } as any;
     } else {
+      // Em produção com emails habilitados, usar configuração real
       this.transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'smtp.gmail.com',
         port: parseInt(process.env.SMTP_PORT || '587'),
         secure: false,
         auth: {
-          user: process.env.SMTP_USER || 'your_smtp_user@example.com',
-          pass: process.env.SMTP_PASS || 'your_smtp_password_here'
+          user: process.env.SMTP_USER || 'accessibility@untile.pt',
+          pass: process.env.SMTP_PASS || 'password'
         }
       });
     }
@@ -55,6 +52,17 @@ export class NotificationService {
     const html = this.generateEmergencyTemplate(options);
 
     try {
+      if (this.isTestMode || !this.shouldSendEmails) {
+        // Em modo de teste ou quando emails estão desabilitados, apenas logar
+        logger.info('SIMULAÇÃO: Alerta de emergência simulado (SEND_EMAILS=false ou modo de teste)', {
+          severity: options.severity,
+          title: options.title,
+          url: options.url,
+          violations: options.violations?.length || 0
+        });
+        return;
+      }
+
       // Enviar para equipa de emergência
       await this.sendEmail({
         to: process.env.EMERGENCY_EMAIL || 'your_emergency_email@example.com',
@@ -68,8 +76,8 @@ export class NotificationService {
       });
     } catch (error) {
       logger.error('Erro ao enviar alerta de emergência:', error);
-      // Não lançar erro em modo teste
-      if (!this.isTestMode) {
+      // Em modo de teste ou quando emails estão desabilitados, não lançar erro
+      if (!this.isTestMode && this.shouldSendEmails) {
         throw error;
       }
     }
@@ -80,6 +88,16 @@ export class NotificationService {
     const html = this.generateMaintenanceTemplate(options);
 
     try {
+      if (this.isTestMode || !this.shouldSendEmails) {
+        // Em modo de teste ou quando emails estão desabilitados, apenas logar
+        logger.info('SIMULAÇÃO: Alerta de manutenção simulado (SEND_EMAILS=false ou modo de teste)', {
+          title: options.title,
+          action: options.action,
+          url: options.url
+        });
+        return;
+      }
+
       await this.sendEmail({
         to: process.env.MAINTENANCE_EMAIL || process.env.EMERGENCY_EMAIL || 'your_maintenance_email@example.com',
         subject,
@@ -92,8 +110,8 @@ export class NotificationService {
       });
     } catch (error) {
       logger.error('Erro ao enviar alerta de manutenção:', error);
-      // Não lançar erro em modo teste
-      if (!this.isTestMode) {
+      // Em modo de teste ou quando emails estão desabilitados, não lançar erro
+      if (!this.isTestMode && this.shouldSendEmails) {
         throw error;
       }
     }
@@ -104,6 +122,16 @@ export class NotificationService {
     const html = this.generateAuthorityTemplate(incident);
 
     try {
+      if (this.isTestMode || !this.shouldSendEmails) {
+        // Em modo de teste ou quando emails estão desabilitados, apenas logar
+        logger.info('SIMULAÇÃO: Notificação para autoridade simulada (SEND_EMAILS=false ou modo de teste)', {
+          incidentId: incident.id,
+          title: incident.title,
+          type: incident.type
+        });
+        return;
+      }
+
       await this.sendEmail({
         to: process.env.AUTHORITY_EMAIL || 'your_authority_email@example.com',
         subject,
@@ -116,8 +144,8 @@ export class NotificationService {
       });
     } catch (error) {
       logger.error('Erro ao enviar notificação para autoridade:', error);
-      // Não lançar erro em modo teste
-      if (!this.isTestMode) {
+      // Em modo de teste ou quando emails estão desabilitados, não lançar erro
+      if (!this.isTestMode && this.shouldSendEmails) {
         throw error;
       }
     }

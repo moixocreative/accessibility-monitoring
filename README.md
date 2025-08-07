@@ -191,6 +191,17 @@ LOG_LEVEL=info
 
 ## 📞 Suporte
 
+Para informações detalhadas sobre instalação, configuração e utilização, consulte a documentação completa:
+
+- [Guia de Instalação](docs/installation-guide.md) - Instruções passo-a-passo para instalação e configuração
+- [Guia de Utilização](docs/usage-guide.md) - Como usar as funcionalidades do sistema
+- [Guia de Desenvolvimento](docs/development-guide.md) - Informações para desenvolvedores
+
+### Documentação Técnica
+- [Anexo A - Critérios WCAG 2.1 AA](./docs/anexo_a_wcag_criteria_revised.md)
+- [Anexo B - Conformidade Legal EAA 2025](./docs/anexo_b_legal_compliance_revised.md)
+- [Anexo I - Monitorização Automática](./docs/anexo_i_automated_monitoring_revised.md)
+
 Para questões técnicas ou de conformidade:
 
 - **Email**: mauriciopereita@untile.pt

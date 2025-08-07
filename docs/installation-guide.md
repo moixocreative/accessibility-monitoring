@@ -1,235 +1,242 @@
 # Guia de Instalação - UNTILE Accessibility Monitoring System
 
-## Pré-requisitos
+## 📋 Pré-requisitos
 
-### Sistema Operativo
-- **Linux**: Ubuntu 20.04+ ou CentOS 8+
-- **macOS**: 10.15+ (Catalina)
-- **Windows**: 10+ (com WSL recomendado)
+### Requisitos do Sistema
+- **Node.js:** >=18.0.0
+- **Yarn:** >=1.22.0
+- **Git:** >=2.30.0
+- **RAM:** Mínimo 4GB (recomendado 8GB)
+- **Espaço:** Mínimo 2GB livre
 
-### Software Necessário
-- **Node.js**: 18.0.0 ou superior
-- **Yarn**: 1.22.0 ou superior
-- **Git**: 2.30.0 ou superior
-
-### Verificar Instalações
+### Verificação de Pré-requisitos
 ```bash
-node --version    # Deve ser >= 18.0.0
-yarn --version    # Deve ser >= 1.22.0
-git --version     # Deve ser >= 2.30.0
+node --version    # Deve ser >=18.0.0
+yarn --version    # Deve ser >=1.22.0
+git --version     # Deve ser >=2.30.0
 ```
 
-## Instalação Passo a Passo
+## 🚀 Instalação Passo-a-Passo
 
-### 1. Clonar o Repositório
+### 1. Clone do Repositório
 ```bash
-git clone https://github.com/moixocreative/untile-accessibility-monitoring.git
-cd untile-accessibility-monitoring
+git clone https://github.com/moixocreative/accessibility-monitoring.git
+cd accessibility-monitoring
 ```
 
-### 2. Instalar Dependências
+### 2. Instalação de Dependências
 ```bash
-# Instalar dependências do projeto
 yarn install
-
-# Verificar se tudo foi instalado corretamente
-yarn --version
 ```
 
-### 3. Configurar Variáveis de Ambiente
+### 3. Configuração de Ambiente
 ```bash
-# Copiar ficheiro de exemplo
 cp env.example .env
-
-# Editar configurações
-nano .env
 ```
 
-### 4. Configuração Básica (.env)
-```bash
+Editar o arquivo `.env` com suas configurações:
+```env
 # Configurações Gerais
 NODE_ENV=development
 PORT=3000
 
 # Monitorização
-MONITORING_INTERVAL=3600000
-ALERT_EMAIL=seu_email@untile.pt
+MONITORING_INTERVAL=3600000  # 1 hora
+ALERT_EMAIL=seu-email@untile.pt
 
 # WCAG Validation
 WCAG_LEVEL=AA
 PRIORITY_CRITERIA=15
 
 # Emergency Contacts
-EMERGENCY_EMAIL=seu_email@untile.pt
-AUTHORITY_EMAIL=seu_email@untile.pt
+EMERGENCY_EMAIL=seu-email@untile.pt
+EMERGENCY_PHONE=+351-XXX-XXX-XXX
+AUTHORITY_EMAIL=authority@example.pt
 
-# Email Configuration (opcional para desenvolvimento)
-SEND_EMAILS=false
+# SMTP Configuration (opcional)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USER=seu_email@untile.pt
-SMTP_PASS=sua_senha_aqui
+SMTP_USER=seu-email@untile.pt
+SMTP_PASS=sua-senha-smtp
+SMTP_FROM=seu-email@untile.pt
+SEND_EMAILS=false  # true para enviar emails reais
+
+# Logging
+LOG_LEVEL=info
 ```
 
-### 5. Build do Projeto
+### 4. Verificação da Instalação
 ```bash
-# Compilar TypeScript
-yarn build
-
-# Verificar se o build foi bem-sucedido
-ls dist/
+yarn lint      # Verificar linting
+yarn build     # Compilar TypeScript
+yarn test      # Executar testes
 ```
 
-### 6. Testar Instalação
-```bash
-# Executar testes básicos
-yarn test
+## 🔧 Configuração Avançada
 
-# Testar auditoria WCAG
-yarn audit:wcag
-
-# Testar sistema de emergência
-yarn emergency --test
+### Configuração do Portfolio
+Editar `src/monitoring/portfolio-monitor.ts`:
+```typescript
+const PORTFOLIO_SITES = [
+  'https://untile.pt',
+  'https://cliente.untile.pt',
+  'https://docs.untile.pt'
+];
 ```
 
-## Configuração Avançada
-
-### Configuração de Email (Produção)
-Para ativar notificações por email em produção:
-
-```bash
-# Habilitar envio de emails
-SEND_EMAILS=true
-
-# Configurar SMTP
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=accessibility@untile.pt
-SMTP_PASS=sua_senha_aqui
-SMTP_FROM=accessibility@untile.pt
+### Configuração de Critérios WCAG
+Editar `src/core/wcag-criteria.ts` para personalizar critérios:
+```typescript
+export const PRIORITY_CRITERIA = [
+  '1.1.1', '1.4.3', '1.4.4', '1.2.2', '1.3.1',
+  '1.4.10', '2.1.1', '2.4.1', '2.4.2', '2.4.7',
+  '2.2.1', '3.3.1', '3.3.2', '3.1.1', '4.1.2'
+];
 ```
 
-### Configuração de Monitorização
+## 🧪 Testes
+
+### Testes Básicos
 ```bash
-# Intervalo de monitorização (em milissegundos)
-MONITORING_INTERVAL=3600000  # 1 hora
-
-# Sites para monitorizar
-MONITORING_SITES=https://untile.pt,https://welligence.pt
-
-# Nível de conformidade WCAG
-WCAG_LEVEL=AA
+yarn test                    # Testes unitários
+yarn audit:wcag --test      # Teste de validação WCAG
+yarn emergency --test        # Teste do sistema de emergência
+yarn report --test          # Teste de geração de relatórios
 ```
 
-### Configuração de Logs
+### Testes de Integração
 ```bash
-# Nível de logging
-LOG_LEVEL=info  # debug, info, warn, error
-
-# Diretório de logs
-LOG_DIR=logs/
+yarn audit:portfolio        # Auditoria completa do portfolio
+yarn monitor               # Monitorização contínua (teste)
 ```
 
-## Verificação da Instalação
+## 🔍 Troubleshooting
 
-### 1. Testes Automáticos
+### Problemas Comuns
+
+#### Erro: "Puppeteer failed to launch"
 ```bash
-# Executar suite completa de testes
-yarn test
+# Instalar dependências do sistema
+sudo apt-get update
+sudo apt-get install -y chromium-browser
 
-# Testar auditoria de portfolio
-yarn audit:portfolio
-
-# Testar sistema de emergência
-yarn emergency --test
+# Ou no macOS
+brew install chromium
 ```
 
-### 2. Verificação Manual
+#### Erro: "Lighthouse connection failed"
 ```bash
-# Iniciar servidor de desenvolvimento
-yarn dev
-
-# Em outro terminal, testar endpoints
-curl http://localhost:3000/health
-curl http://localhost:3000/api/portfolio/stats
-```
-
-### 3. Verificar Logs
-```bash
-# Verificar logs de acessibilidade
-tail -f logs/accessibility.log
-
-# Verificar logs de emergência
-tail -f logs/emergency.log
-```
-
-## Troubleshooting
-
-### Problema: "Cannot find module"
-**Solução**: Reinstalar dependências
-```bash
-rm -rf node_modules yarn.lock
-yarn install
-```
-
-### Problema: "TypeScript compilation failed"
-**Solução**: Verificar versão do TypeScript
-```bash
-yarn add typescript@^5.3.3
-yarn build
-```
-
-### Problema: "Puppeteer timeout"
-**Solução**: Configurar timeouts
-```bash
+# Verificar se o browser está disponível
 export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 ```
 
-### Problema: "SMTP connection failed"
-**Solução**: Desabilitar emails para desenvolvimento
+#### Erro: "SMTP authentication failed"
 ```bash
-export SEND_EMAILS=false
-export NODE_ENV=development
+# Verificar configurações SMTP
+# Para Gmail, ativar "App passwords"
+# Definir SEND_EMAILS=false para testes
 ```
 
-## Configuração de Produção
-
-### 1. Variáveis de Ambiente de Produção
+#### Erro: "TypeScript compilation failed"
 ```bash
-NODE_ENV=production
-SEND_EMAILS=true
-LOG_LEVEL=warn
-MONITORING_INTERVAL=1800000  # 30 minutos
+# Limpar cache
+rm -rf node_modules
+yarn install
+yarn build
 ```
 
-### 2. Configuração de Segurança
+### Logs e Debugging
 ```bash
-# Usar secrets para credenciais
-SMTP_PASS=${{ secrets.SMTP_PASS }}
-EMERGENCY_EMAIL=${{ secrets.EMERGENCY_EMAIL }}
+# Ver logs em tempo real
+tail -f logs/accessibility.log
+tail -f logs/error.log
+
+# Verificar configuração
+yarn lint
+yarn build
 ```
 
-### 3. Configuração de Performance
+## 🔒 Segurança
+
+### Variáveis de Ambiente
+- Nunca commitar `.env` no repositório
+- Usar secrets no GitHub Actions
+- Rotacionar senhas regularmente
+
+### Permissões de Arquivo
 ```bash
-# Aumentar timeouts para sites lentos
-PUPPETEER_TIMEOUT=60000
-LIGHTHOUSE_TIMEOUT=120000
+chmod 600 .env
+chmod 755 logs/
 ```
 
-## Próximos Passos
+### Firewall e Rede
+- Configurar firewall para portas necessárias
+- Usar HTTPS para todas as comunicações
+- Validar certificados SSL
 
-Após a instalação bem-sucedida:
+## 📊 Performance
 
-1. **Configurar Sites**: Adicionar URLs para monitorizar
-2. **Configurar Alertas**: Definir emails de emergência
-3. **Testar Sistema**: Executar auditoria completa
-4. **Configurar CI/CD**: Configurar GitHub Actions
-5. **Monitorizar Logs**: Verificar funcionamento contínuo
+### Otimizações Recomendadas
+```bash
+# Aumentar memória do Node.js
+export NODE_OPTIONS="--max-old-space-size=4096"
 
-## Suporte
+# Configurar cache do Puppeteer
+export PUPPETEER_CACHE_DIR=~/.cache/puppeteer
+```
+
+### Monitorização de Recursos
+```bash
+# Verificar uso de memória
+ps aux | grep node
+
+# Verificar uso de CPU
+top -p $(pgrep -f "node.*accessibility")
+```
+
+## 🚀 Deploy
+
+### Ambiente de Desenvolvimento
+```bash
+yarn dev
+```
+
+### Ambiente de Produção
+```bash
+yarn build
+yarn start
+```
+
+### Docker (opcional)
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN yarn install --production
+COPY . .
+RUN yarn build
+EXPOSE 3000
+CMD ["yarn", "start"]
+```
+
+## ✅ Checklist de Instalação
+
+- [ ] Node.js >=18.0.0 instalado
+- [ ] Yarn >=1.22.0 instalado
+- [ ] Git >=2.30.0 instalado
+- [ ] Repositório clonado
+- [ ] Dependências instaladas
+- [ ] Arquivo .env configurado
+- [ ] Testes passando
+- [ ] Build funcionando
+- [ ] Logs configurados
+- [ ] Portfolio configurado
+- [ ] Notificações testadas
+
+## 🆘 Suporte
 
 Para problemas de instalação:
-- Verificar logs em `logs/`
-- Consultar [Guia de Desenvolvimento](development-guide.md)
-- Contactar equipa técnica: mauriciopereita@untile.pt 
+- **Email:** accessibility@untile.pt
+- **Slack:** #accessibility-dev
+- **Documentação:** [Guia de Desenvolvimento](./development-guide.md) 

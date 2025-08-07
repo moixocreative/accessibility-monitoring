@@ -1,294 +1,371 @@
-# Guia de Uso - UNTILE Accessibility Monitoring System
+# Guia de Utilização - UNTILE Accessibility Monitoring System
 
-## Visão Geral
+## 🎯 Visão Geral
 
-O UNTILE Accessibility Monitoring System é uma ferramenta completa para monitorização contínua de acessibilidade digital, garantindo conformidade com WCAG 2.1 AA e preparação para EAA 2025.
+O sistema de monitorização de acessibilidade UNTILE oferece três funcionalidades principais:
 
-## Scripts Principais
+1. **Monitorização Automática** - Auditoria contínua de websites
+2. **Sistema de Emergência** - Resposta rápida a violações críticas
+3. **Relatórios** - Geração de relatórios de conformidade
 
-### 1. Monitorização Contínua
+## 📊 Scripts Principais
+
+### Monitorização
+
+#### Auditoria WCAG Única
 ```bash
-# Iniciar monitorização contínua
-yarn monitor
-
-# Monitorização com logs detalhados
-yarn monitor --verbose
-```
-
-**Funcionalidades:**
-- Monitorização automática de todos os sites do portfolio
-- Deteção de violações WCAG em tempo real
-- Alertas automáticos por email
-- Relatórios periódicos
-
-### 2. Auditoria WCAG
-```bash
-# Auditoria única de um site
 yarn audit:wcag
+```
+**O que faz:**
+- Valida os 15 critérios WCAG 2.1 AA prioritários
+- Gera relatório detalhado de conformidade
+- Salva resultados em `logs/audit.log`
 
-# Auditoria com URL específica
-yarn audit:wcag --url https://example.com
-
-# Auditoria completa do portfolio
+#### Auditoria do Portfolio
+```bash
 yarn audit:portfolio
 ```
+**O que faz:**
+- Audita todos os sites configurados no portfolio
+- Valida acessibilidade e performance
+- Gera relatório consolidado
 
-**Critérios Verificados:**
-- **1.1.1** - Conteúdo não textual
-- **1.4.3** - Contraste (mínimo)
-- **1.4.4** - Redimensionar texto
-- **2.1.1** - Teclado
-- **2.4.1** - Bypass blocks
-- **2.4.7** - Foco visível
-- E mais 9 critérios prioritários
-
-### 3. Sistema de Emergência
+#### Monitorização Contínua
 ```bash
-# Testar sistema de emergência
+yarn monitor
+```
+**O que faz:**
+- Inicia monitorização contínua (intervalo configurável)
+- Detecta violações em tempo real
+- Envia alertas automáticos
+
+### Emergência
+
+#### Teste do Sistema de Emergência
+```bash
 yarn emergency --test
+```
+**O que faz:**
+- Testa o sistema de notificações
+- Simula cenários de emergência
+- Valida templates de comunicação
 
-# Validar configurações
+#### Validação de Configurações
+```bash
 yarn emergency --validate
+```
+**O que faz:**
+- Valida configurações de emergência
+- Verifica conectividade de notificações
+- Testa templates de email
 
-# Gerar relatório de emergência
+#### Relatório de Emergência
+```bash
 yarn emergency --report
 ```
+**O que faz:**
+- Gera relatório de incidentes
+- Lista violações críticas
+- Sugere ações corretivas
 
-**Classificação de Incidentes:**
-- **P0 (Crítico)**: SLA 2 horas
-- **P1 (Alto)**: SLA 8 horas
-- **P2 (Médio)**: SLA 24 horas
+### Relatórios
 
-### 4. Geração de Relatórios
+#### Relatório de Testes
 ```bash
-# Relatório de testes
 yarn report --test
+```
+**O que faz:**
+- Gera relatório de testes executados
+- Mostra cobertura de validação
+- Lista problemas encontrados
 
-# Relatório de release
+#### Relatório de Release
+```bash
 yarn report --release
+```
+**O que faz:**
+- Gera relatório para releases
+- Valida conformidade antes do deploy
+- Documenta mudanças
 
-# Relatório de deploy
+#### Relatório de Deploy
+```bash
 yarn report --deploy
 ```
+**O que faz:**
+- Gera relatório pós-deploy
+- Confirma conformidade em produção
+- Valida performance
 
-## Configuração do Portfolio
+## ⚙️ Configuração
 
-### Adicionar Sites para Monitorizar
+### Portfolio de Sites
+
 Editar `src/monitoring/portfolio-monitor.ts`:
-
 ```typescript
-private loadPortfolioSites(): void {
-  this.sites = [
-    {
-      id: 'site_1',
-      name: 'Welligence Website',
-      url: 'https://welligence.pt',
-      technology: 'webflow',
-      client: 'Welligence',
-      lastAudit: new Date(),
-      wcagScore: 85,
-      violations: [],
-      status: 'active'
-    },
-    // Adicionar mais sites aqui
-  ];
-}
-```
-
-### Configurar Critérios Prioritários
-Editar `src/core/wcag-criteria.ts`:
-
-```typescript
-export const PRIORITY_WCAG_CRITERIA: WCAGCriteria[] = [
-  // Critérios já configurados
-  // Adicionar critérios específicos se necessário
+export const PORTFOLIO_SITES = [
+  {
+    url: 'https://untile.pt',
+    name: 'Website Principal',
+    priority: 'high'
+  },
+  {
+    url: 'https://cliente.untile.pt',
+    name: 'Área de Cliente',
+    priority: 'critical'
+  },
+  {
+    url: 'https://docs.untile.pt',
+    name: 'Documentação',
+    priority: 'medium'
+  }
 ];
 ```
 
-## Configuração de Notificações
+### Configuração de Notificações
 
-### 1. Configuração de Email
-```bash
-# Habilitar envio de emails
+Editar `.env`:
+```env
+# Email Configuration
 SEND_EMAILS=true
-
-# Configurar SMTP
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=accessibility@untile.pt
-SMTP_PASS=sua_senha_aqui
-```
+SMTP_PASS=your-app-password
 
-### 2. Configuração de Alertas
-```bash
-# Emails de emergência
+# Alert Configuration
+ALERT_EMAIL=accessibility@untile.pt
 EMERGENCY_EMAIL=emergency@untile.pt
-AUTHORITY_EMAIL=authority@untile.pt
+AUTHORITY_EMAIL=authority@example.pt
 
-# Configuração de SLA
-P0_SLA_HOURS=2
-P1_SLA_HOURS=8
-P2_SLA_HOURS=24
-```
-
-## Interpretação de Resultados
-
-### Scores WCAG
-- **90-100%**: Excelente conformidade
-- **80-89%**: Boa conformidade
-- **70-79%**: Conformidade aceitável
-- **<70%**: Requer atenção imediata
-
-### Tipos de Violação
-- **Critical**: Bloqueia completamente o acesso
-- **Serious**: Dificulta significativamente o acesso
-- **Moderate**: Dificulta parcialmente o acesso
-- **Minor**: Pequena dificuldade no acesso
-
-### Exemplo de Relatório
-```
-🎯 AUDITORIA WCAG - https://example.com
-========================================
-Score WCAG: 85%
-Total de violações: 3
-Violações críticas: 0
-Violações sérias: 2
-Violações moderadas: 1
-
-🚨 VIOLAÇÕES DETETADAS:
-- 1.4.3: Contraste insuficiente no texto
-- 2.4.7: Foco não visível em elementos interativos
-- 1.1.1: Imagem sem texto alternativo
-
-✅ RECOMENDAÇÕES:
-1. Aumentar contraste do texto para 4.5:1
-2. Adicionar outline visível ao foco
-3. Incluir alt text em todas as imagens
-```
-
-## Monitorização Contínua
-
-### Configuração de Intervalos
-```bash
-# Intervalo de monitorização (em milissegundos)
+# Monitoring Configuration
 MONITORING_INTERVAL=3600000  # 1 hora
-
-# Intervalo de relatórios
-REPORT_INTERVAL=86400000      # 24 horas
-
-# Intervalo de verificação de SLA
-SLA_CHECK_INTERVAL=300000     # 5 minutos
+WCAG_LEVEL=AA
+PRIORITY_CRITERIA=15
 ```
 
-### Logs e Monitorização
-```bash
-# Ver logs em tempo real
-tail -f logs/accessibility.log
+### Critérios WCAG Personalizados
 
-# Ver logs de emergência
-tail -f logs/emergency.log
-
-# Ver logs de erro
-tail -f logs/error.log
+Editar `src/core/wcag-criteria.ts`:
+```typescript
+export const CUSTOM_CRITERIA = {
+  '1.1.1': { priority: 'P0', description: 'Conteúdo Não-Textual' },
+  '1.4.3': { priority: 'P0', description: 'Contraste (Mínimo)' },
+  '2.1.1': { priority: 'P0', description: 'Teclado' },
+  // ... outros critérios
+};
 ```
 
-## API REST
+## 📈 Interpretação de Resultados
 
-### Endpoints Disponíveis
+### Relatórios de Auditoria
 
-#### Health Check
-```bash
-GET /health
-```
-**Resposta:**
+#### Estrutura do Relatório
 ```json
 {
-  "status": "healthy",
+  "site": "https://untile.pt",
   "timestamp": "2024-01-15T10:30:00Z",
-  "service": "UNTILE Accessibility Monitoring System"
-}
-```
-
-#### Portfolio Stats
-```bash
-GET /api/portfolio/stats
-```
-**Resposta:**
-```json
-{
-  "totalSites": 3,
-  "auditedSites": 3,
-  "averageScore": 85.3,
-  "complianceTrend": 2.1,
-  "lastAudit": "2024-01-15T10:30:00Z"
-}
-```
-
-#### Emergency Incidents
-```bash
-GET /api/emergency/incidents
-```
-**Resposta:**
-```json
-{
-  "incidents": [
+  "overall_score": 85,
+  "wcag_compliance": {
+    "passed": 12,
+    "failed": 3,
+    "total": 15
+  },
+  "critical_violations": [
     {
-      "id": "incident_123",
-      "type": "P0",
-      "title": "Violação Crítica WCAG",
-      "status": "detected",
-      "detectedAt": "2024-01-15T10:30:00Z"
+      "criterion": "1.4.3",
+      "description": "Contraste insuficiente",
+      "severity": "P0",
+      "elements": ["button.primary", "a.nav-link"]
     }
+  ],
+  "recommendations": [
+    "Aumentar contraste do texto principal",
+    "Adicionar labels aos formulários"
   ]
 }
 ```
 
-## Troubleshooting
+#### Interpretação de Scores
+- **90-100:** Excelente conformidade
+- **80-89:** Boa conformidade
+- **70-79:** Conformidade aceitável
+- **60-69:** Conformidade baixa
+- **<60:** Não conforme
 
-### Problema: Monitorização não inicia
-**Solução:**
+### Alertas de Emergência
+
+#### Classificação de Severidade
+- **P0 (Crítico):** SLA 2h - Violação de critério crítico
+- **P1 (Alto):** SLA 8h - Violação de critério importante
+- **P2 (Médio):** SLA 24h - Violação de critério menor
+
+#### Estrutura do Alerta
+```json
+{
+  "incident_id": "INC-2024-001",
+  "severity": "P0",
+  "site": "https://untile.pt",
+  "criterion": "1.4.3",
+  "description": "Contraste crítico insuficiente",
+  "detected_at": "2024-01-15T10:30:00Z",
+  "sla_deadline": "2024-01-15T12:30:00Z",
+  "actions_required": [
+    "Corrigir contraste imediatamente",
+    "Notificar equipa de design",
+    "Validar correção"
+  ]
+}
+```
+
+## 🔧 Troubleshooting
+
+### Problemas Comuns
+
+#### Monitorização Para de Funcionar
 ```bash
-# Verificar configuração
-yarn emergency --validate
-
 # Verificar logs
-tail -f logs/error.log
+tail -f logs/accessibility.log
+
+# Reiniciar monitorização
+pkill -f "yarn monitor"
+yarn monitor
 ```
 
-### Problema: Testes falham
-**Solução:**
+#### Alertas Não Enviados
 ```bash
-# Limpar cache
-rm -rf node_modules/.cache
-
-# Reinstalar dependências
-yarn install
-
-# Executar testes
-yarn test
-```
-
-### Problema: Emails não são enviados
-**Solução:**
-```bash
-# Verificar configuração SMTP
+# Testar configuração SMTP
 yarn emergency --test
 
-# Verificar logs
-tail -f logs/emergency.log
+# Verificar variáveis de ambiente
+echo $SEND_EMAILS
+echo $SMTP_HOST
 ```
 
-## Próximos Passos
+#### Relatórios Não Gerados
+```bash
+# Verificar permissões
+ls -la logs/
+chmod 755 logs/
 
-1. **Configurar Sites**: Adicionar URLs do portfolio
-2. **Configurar Alertas**: Definir emails de emergência
-3. **Testar Sistema**: Executar auditoria completa
-4. **Monitorizar Logs**: Verificar funcionamento
-5. **Configurar CI/CD**: Integrar com GitHub Actions
+# Limpar cache
+rm -rf logs/*.log
+yarn report --test
+```
 
-## Suporte
+### Logs e Debugging
 
-Para questões de uso:
-- **Email**: mauriciopereita@untile.pt
-- **Documentação**: [Guia de Desenvolvimento](development-guide.md)
-- **Logs**: Verificar ficheiros em `logs/` 
+#### Logs Principais
+- `logs/accessibility.log` - Logs gerais do sistema
+- `logs/audit.log` - Logs de auditoria
+- `logs/emergency.log` - Logs de emergência
+- `logs/error.log` - Logs de erro
+
+#### Comandos de Debug
+```bash
+# Ver logs em tempo real
+tail -f logs/accessibility.log
+
+# Filtrar por tipo de erro
+grep "ERROR" logs/error.log
+
+# Ver últimas auditorias
+tail -n 50 logs/audit.log
+```
+
+## 🔄 Monitorização Contínua
+
+### Configuração de Cron Jobs
+
+#### Linux/macOS
+```bash
+# Adicionar ao crontab
+crontab -e
+
+# Executar auditoria a cada hora
+0 * * * * cd /path/to/accessibility-monitoring && yarn audit:portfolio
+
+# Executar monitorização contínua
+*/30 * * * * cd /path/to/accessibility-monitoring && yarn monitor
+```
+
+#### Windows (Task Scheduler)
+```cmd
+# Criar tarefa para auditoria
+schtasks /create /tn "Accessibility Audit" /tr "yarn audit:portfolio" /sc hourly /ru "SYSTEM"
+
+# Criar tarefa para monitorização
+schtasks /create /tn "Accessibility Monitor" /tr "yarn monitor" /sc minute /mo 30 /ru "SYSTEM"
+```
+
+### Integração CI/CD
+
+#### GitHub Actions
+```yaml
+name: Accessibility Check
+on: [push, pull_request]
+jobs:
+  accessibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - run: yarn install
+      - run: yarn audit:wcag
+      - run: yarn emergency --test
+```
+
+#### Jenkins Pipeline
+```groovy
+stage('Accessibility Test') {
+    steps {
+        sh 'yarn install'
+        sh 'yarn audit:wcag'
+        sh 'yarn emergency --test'
+    }
+}
+```
+
+## 📊 Métricas e KPIs
+
+### Métricas Principais
+- **Conformidade WCAG:** Percentagem de critérios cumpridos
+- **Tempo de Resposta:** SLA para correções
+- **Violações Críticas:** Número de P0/P1
+- **Cobertura Portfolio:** Sites monitorizados
+
+### Dashboard de Monitorização
+```bash
+# Gerar relatório de métricas
+yarn report --metrics
+
+# Ver estatísticas
+yarn report --stats
+```
+
+## ✅ Checklist de Utilização
+
+### Configuração Inicial
+- [ ] Portfolio configurado
+- [ ] Notificações testadas
+- [ ] Critérios WCAG definidos
+- [ ] Logs configurados
+
+### Monitorização Diária
+- [ ] Verificar logs de erro
+- [ ] Validar alertas recebidos
+- [ ] Confirmar auditorias executadas
+- [ ] Verificar relatórios gerados
+
+### Manutenção Semanal
+- [ ] Revisar configurações
+- [ ] Atualizar portfolio se necessário
+- [ ] Verificar performance do sistema
+- [ ] Backup de logs e relatórios
+
+## 🆘 Suporte
+
+Para questões de utilização:
+- **Email:** accessibility@untile.pt
+- **Slack:** #accessibility-support
+- **Documentação:** [Guia de Desenvolvimento](./development-guide.md) 

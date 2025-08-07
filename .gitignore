@@ -72,7 +72,12 @@ reports/
 # Temporary files
 tmp/
 temp/
+*.tmp
+*.temp
 
 # Test artifacts
 test-results/
 accessibility-test-results/
+
+# TypeScript
+*.tsbuildinfo
