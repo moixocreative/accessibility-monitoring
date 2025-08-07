@@ -121,26 +121,4 @@ export interface ReportData {
     };
     recommendations: string[];
 }
-export declare enum EmergencyLevel {
-    P0_CRITICAL = "P0",
-    P1_HIGH = "P1",
-    P2_MEDIUM = "P2"
-}
-export declare enum ViolationSeverity {
-    CRITICAL = "critical",
-    SERIOUS = "serious",
-    MODERATE = "moderate",
-    MINOR = "minor"
-}
-export declare enum Technology {
-    WEBFLOW = "webflow",
-    LARAVEL = "laravel",
-    WORDPRESS = "wordpress"
-}
-export declare enum AuditStatus {
-    PENDING = "pending",
-    IN_PROGRESS = "in-progress",
-    COMPLETED = "completed",
-    FAILED = "failed"
-}
 //# sourceMappingURL=index.d.ts.map
